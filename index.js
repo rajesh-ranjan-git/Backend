@@ -13,8 +13,10 @@ const server = http.createServer((req, res) => {
     res.end(data);
   } else if (req.url == "/profile") {
     res.end("I am Profile Page.");
-  } else if (req.url == "/products") {
-    let { title, rating, price, description } = productsData[0];
+  } else if (req.url.startsWith("/products")) {
+    let idx = req.url.split("/")[2];
+    let product = productsData.find((obj) => obj.id == idx);
+    let { title, rating, price, description } = product;
     let modifiedHTML = indexFile
       .replace("**title**", title)
       .replace("**rating**", rating)
