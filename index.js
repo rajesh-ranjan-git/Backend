@@ -1,59 +1,60 @@
 import express from "express";
+import fs from "fs";
 
 const server = express();
 const port = 3000;
 
-//Middleware
-// server.use((req, res, next) => {
-//   // This will get applied on all the routes (Application Level Middleware).
-//   console.log("I am a middleware");
-//   if (req.query.password == "123") {
-//     next();
-//   } else {
-//     res.json({ response: false });
-//   }
-// });
+const data = JSON.parse(fs.readFileSync("Data.json", "utf-8"));
+const productsData = data.products;
 
-const auth = (req, res, next) => {
-  // This will only be applied on specific routes (Router Level or Custom Middleware).
-  console.log("I am a middleware");
-  if (req.query.password == "123") {
-    next();
-  } else {
-    res.json({ response: false });
-  }
-};
+server.use(express.json());
 
-server.use(express.json()); // This is used to read the data of body (In-Built middleware like body parser). It is used because Express cannot read body of the request.
+//CRUD in REST
 
-server.get("/", (req, res) => {
-  res.send({ get: "This is our get request." });
+// Create
+server.post("/products", (req, res) => {
+  let data = req.body;
+  productsData.push(data);
+  res.json(data);
+});
+
+// Read
+server.get("/products", (req, res) => {
+  res.json(productsData);
 });
 
 server.get("/products/:id", (req, res) => {
-  console.log(req.params.id);
-  console.log(req.body);
-  res.send({
-    get: `This is our get request and id of product is ${req.params.id}`,
-  });
+  let idx = req.params.id;
+  let data = productsData.find((obj) => obj.id == idx);
+  res.json(data);
 });
 
-server.post("/", (req, res) => {
-  res.send({ post: "This is our post request." });
+// Update
+server.put("/products/:id", (req, res) => {
+  let idx = req.params.id;
+  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
+  productsData.splice(dataIdx, 1, { ...req.body, id: idx });
+  res.json(req.body);
 });
 
-server.put("/", auth, (req, res) => {
-  res.send({ put: "This is our put request." });
+server.patch("/products/:id", (req, res) => {
+  let idx = req.params.id;
+  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
+  let dataObj = productsData[dataIdx];
+  let modifiedData = { ...dataObj, ...req.body };
+  productsData.splice(dataIdx, 1, modifiedData);
+  res.json(modifiedData);
 });
 
-server.patch("/", (req, res) => {
-  res.send({ patch: "This is our patch request." });
-});
-
-server.delete("/", (req, res) => {
-  res.send({ delete: "This is our delete request." });
+// Delete
+server.delete("/products/:id", (req, res) => {
+  let idx = req.params.id;
+  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
+  let dataObj = productsData[dataIdx];
+  productsData.splice(dataIdx, 1);
+  res.json(dataObj);
 });
 
 server.listen(port, () => {
-  console.log("Server is running");
+  console.log(`Server is running on http://localhost:${port}`);
 });
