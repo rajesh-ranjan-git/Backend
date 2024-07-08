@@ -1,59 +1,41 @@
 import express from "express";
-import fs from "fs";
+import productsRouter from "./Routes/products.routes.js";
+import usersRouter from "./Routes/users.routes.js";
 
 const server = express();
 const port = 3000;
-
-const data = JSON.parse(fs.readFileSync("Data.json", "utf-8"));
-const productsData = data.products;
 
 server.use(express.json());
 
 //CRUD in REST
 
 // Create
-server.post("/products", (req, res) => {
-  let data = req.body;
-  productsData.push(data);
-  res.json(data);
-});
+// server.post("/products", createProduct); // This is chainable so can also be written as below.
 
-// Read
-server.get("/products", (req, res) => {
-  res.json(productsData);
-});
+// // Read
+// server.get("/products", allProducts);
 
-server.get("/products/:id", (req, res) => {
-  let idx = req.params.id;
-  let data = productsData.find((obj) => obj.id == idx);
-  res.json(data);
-});
+// server.get("/products/:id", singleProduct);
 
-// Update
-server.put("/products/:id", (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
-  productsData.splice(dataIdx, 1, { ...req.body, id: idx });
-  res.json(req.body);
-});
+// // Update
+// server.put("/products/:id", replaceProduct);
 
-server.patch("/products/:id", (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
-  let dataObj = productsData[dataIdx];
-  let modifiedData = { ...dataObj, ...req.body };
-  productsData.splice(dataIdx, 1, modifiedData);
-  res.json(modifiedData);
-});
+// server.patch("/products/:id", updateProduct);
 
-// Delete
-server.delete("/products/:id", (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = productsData.findIndex((obj) => obj.id == idx);
-  let dataObj = productsData[dataIdx];
-  productsData.splice(dataIdx, 1);
-  res.json(dataObj);
-});
+// // Delete
+// server.delete("/products/:id", deleteProduct);
+
+// CRUD using chaining
+// server
+//   .post("/products", createProduct)
+//   .get("/products", allProducts)
+//   .get("/products/:id", singleProduct)
+//   .put("/products/:id", replaceProduct)
+//   .patch("/products/:id", updateProduct)
+//   .delete("/products/:id", deleteProduct);
+
+server.use("/products", productsRouter);
+server.use("/users", usersRouter);
 
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -2,7 +2,7 @@ import http from "http";
 import fs from "fs";
 
 const indexFile = fs.readFileSync("index.html", "utf-8");
-const data = fs.readFileSync("Data.json", "utf-8");
+const data = fs.readFileSync("./JSON/Data.json", "utf-8");
 const productsData = JSON.parse(data).products;
 
 const server = http.createServer((req, res) => {
