@@ -1,0 +1,1 @@
+mongodb+srv://rajesh-mongo:rajesh@getkart.1j7n22q.mongodb.net/?retryWrites=true&w=majority&appName=GetKart
