@@ -1,58 +1,68 @@
-import fs from "fs";
+import User from "../Models/user.model.js";
 
-const data = JSON.parse(
-  fs.readFileSync(
-    "D:/Study/Web Development/GFG_Study/Practice/Backend/JSON/Users.json",
-    "utf-8"
-  )
-);
-const usersData = data.users;
-
-const allUsers = (req, res) => {
-  res.json(usersData);
-};
-
-const singleUser = (req, res) => {
-  let idx = req.params.id;
-  let data = usersData.find((obj) => obj.id == idx);
-  res.json(data);
-};
-
-const createUser = (req, res) => {
+// Create User
+const createUser = async (req, res) => {
   let data = req.body;
-  usersData.push(data);
-  res.json(data);
+  let newUser = new User(data);
+  let userData = await newUser.save();
+
+  res.send(userData);
 };
 
-const replaceUser = (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = usersData.findIndex((obj) => obj.id == idx);
-  usersData.splice(dataIdx, 1, { ...req.body, id: idx });
-  res.json(req.body);
+// Update User
+const updateUser = async (req, res) => {
+  let { email } = req.body;
+  let userData = await User.findOneAndUpdate({ email: email }, req.body, {
+    new: true,
+  });
+
+  res.send(userData);
 };
 
-const updateUser = (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = usersData.findIndex((obj) => obj.id == idx);
-  let dataObj = usersData[dataIdx];
-  let modifiedData = { ...dataObj, ...req.body };
-  usersData.splice(dataIdx, 1, modifiedData);
-  res.json(modifiedData);
+// Replace User
+const replaceUser = async (req, res) => {
+  let { email } = req.body;
+  let userData = await User.findOneAndReplace({ email: email }, req.body, {
+    new: true,
+  });
+
+  res.send(userData);
 };
 
-const deleteUser = (req, res) => {
-  let idx = req.params.id;
-  let dataIdx = usersData.findIndex((obj) => obj.id == idx);
-  let dataObj = usersData[dataIdx];
-  usersData.splice(dataIdx, 1);
-  res.json(dataObj);
+// Delete User
+const deleteUser = async (req, res) => {
+  let { email } = req.body;
+  let userData = await User.findOneAndDelete({ email: email }, req.body, {
+    new: true,
+  });
+
+  res.send(userData);
 };
 
-export {
-  allUsers,
-  singleUser,
-  createUser,
-  replaceUser,
-  updateUser,
-  deleteUser,
+// Single User
+// const singleUser = async (req, res) => {
+//   let { email } = req.body;
+//   let userData = await User.findOne({ email: email }, req.body, {
+//     new: true,
+//   });
+
+//   res.send(userData);
+// };
+
+// All Users
+const allUsers = async (req, res) => {
+  let userData = await User.find();
+
+  res.send(userData);
 };
+
+export { createUser, updateUser, replaceUser, deleteUser, allUsers };
+
+// Create User
+// Update User
+// Replace User
+// Delete User
+// All Users
+// Single User
+// Login
+// Signup / Create User
