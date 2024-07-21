@@ -56,6 +56,14 @@ const allUsers = async (req, res) => {
   res.send(userData);
 };
 
+const signUp = async (req, res) => {
+  let user = await User.findOne({ email: email });
+
+  if (user) {
+    res.send({ result: false, message: "User already exists.." });
+  }
+};
+
 export { createUser, updateUser, replaceUser, deleteUser, allUsers };
 
 // Create User
