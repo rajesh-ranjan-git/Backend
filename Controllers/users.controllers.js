@@ -1,4 +1,5 @@
 import User from "../Models/user.model.js";
+import bcrypt from "bcrypt";
 
 // Create User
 const createUser = async (req, res) => {
@@ -40,14 +41,14 @@ const deleteUser = async (req, res) => {
 };
 
 // Single User
-// const singleUser = async (req, res) => {
-//   let { email } = req.body;
-//   let userData = await User.findOne({ email: email }, req.body, {
-//     new: true,
-//   });
+const singleUser = async (req, res) => {
+  let { email } = req.body;
+  let userData = await User.findOne({ email: email }, req.body, {
+    new: true,
+  });
 
-//   res.send(userData);
-// };
+  res.send(userData);
+};
 
 // All Users
 const allUsers = async (req, res) => {
@@ -57,14 +58,36 @@ const allUsers = async (req, res) => {
 };
 
 const signUp = async (req, res) => {
+  let { userName, email, password } = req.body;
   let user = await User.findOne({ email: email });
 
   if (user) {
     res.send({ result: false, message: "User already exists.." });
   }
+
+  const salt = bcrypt.genSaltSync(10);
+  const hashedPassword = bcrypt.hashSync(password, salt);
+
+  const newUser = new User({
+    userName: userName,
+    email: email,
+    password: hashedPassword,
+  });
+
+  let data = await newUser.save();
+
+  res.send({ result: true, message: "User created succesfully", data: data });
 };
 
-export { createUser, updateUser, replaceUser, deleteUser, allUsers };
+export {
+  createUser,
+  updateUser,
+  replaceUser,
+  deleteUser,
+  singleUser,
+  allUsers,
+  signUp,
+};
 
 // Create User
 // Update User

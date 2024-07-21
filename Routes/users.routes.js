@@ -4,7 +4,9 @@ import {
   updateUser,
   replaceUser,
   deleteUser,
+  singleUser,
   allUsers,
+  signUp,
 } from "../Controllers/users.controllers.js";
 
 const usersRouter = express.Router();
@@ -14,7 +16,8 @@ usersRouter
   .patch("/", updateUser)
   .put("/", replaceUser)
   .delete("/", deleteUser)
-  .get("/", allUsers);
-// .get("/", singleUser);
+  .get("/1", singleUser)
+  .get("/", allUsers)
+  .post("/signup", signUp);
 
 export default usersRouter;
