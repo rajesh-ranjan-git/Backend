@@ -79,6 +79,24 @@ const signUp = async (req, res) => {
   res.send({ result: true, message: "User created succesfully", data: data });
 };
 
+const login = async (req, res) => {
+  let { email, password } = req.body;
+
+  let user = await User.findOne({ email: email });
+
+  if (!user) {
+    res.send({ result: false, message: "User does not exist.." });
+  }
+
+  let result = bcrypt.compareSync(password, user.password);
+
+  if (result == true) {
+    res.send({ result: true, message: "Login Successful" });
+  } else {
+    res.send({ result: false, message: "Incorrect password" });
+  }
+};
+
 export {
   createUser,
   updateUser,
@@ -87,6 +105,7 @@ export {
   singleUser,
   allUsers,
   signUp,
+  login,
 };
 
 // Create User

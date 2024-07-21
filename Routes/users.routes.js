@@ -7,6 +7,7 @@ import {
   singleUser,
   allUsers,
   signUp,
+  login,
 } from "../Controllers/users.controllers.js";
 
 const usersRouter = express.Router();
@@ -18,6 +19,7 @@ usersRouter
   .delete("/", deleteUser)
   .get("/1", singleUser)
   .get("/", allUsers)
-  .post("/signup", signUp);
+  .post("/signup", signUp)
+  .post("/login", login);
 
 export default usersRouter;
